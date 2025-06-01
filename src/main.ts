@@ -15,6 +15,7 @@ async function bootstrap() {
     origin: configService.get('cors.origin'),
   });
 
+
   // Validation
   app.useGlobalPipes(
     new ValidationPipe({
