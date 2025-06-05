@@ -1,8 +1,8 @@
-import { Controller, Body, Param, Delete, Put, Get, Post, Query, HttpStatus, HttpCode } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { Controller, Body, Param, Delete, Put, Get, Post, Query } from '@nestjs/common';
 import { TeamsService } from './teams.service';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { TeamResponseDto } from './dto/team-response.dto';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { SortingDto } from '../common/dto/sorting.dto';
@@ -31,19 +31,12 @@ export class TeamsController extends BaseController<Team, CreateTeamDto, UpdateT
   @ApiQuery({ name: 'limit', required: false, description: 'Number of items per page', type: Number, example: 10 })
   @ApiQuery({ name: 'sort', required: false, description: 'Field to sort by', type: String, example: 'name' })
   @ApiQuery({ name: 'order', required: false, description: 'Sort order (asc or desc)', enum: ['asc', 'desc'], example: 'asc' })
-  @ApiQuery({ name: 'name', required: false, type: String, description: 'Filter by name (partial match)' })
-  @ApiQuery({ name: 'country', required: false, type: String, description: 'Filter by country (exact match)' })
-  @ApiQuery({ name: 'isActive', required: false, type: Boolean, description: 'Filter by active status' })
   @ApiResponse({ status: 200, description: 'List of teams with pagination metadata' })
   async findAll(
     @Query() paginationDto: PaginationDto,
     @Query() sortingDto: SortingDto,
-    @Query('name') name?: string,
-    @Query('country') country?: string,
-    @Query('isActive') isActive?: boolean,
   ) {
-    const filters = { name, country, isActive };
-    return this.teamsService.findAll(paginationDto, sortingDto, filters);
+    return super.findAll(paginationDto, sortingDto);
   }
 
   @Get(':id')
@@ -69,7 +62,6 @@ export class TeamsController extends BaseController<Team, CreateTeamDto, UpdateT
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a team' })
   @ApiParam({ name: 'id', description: 'Team ID', type: String })
   @ApiResponse({ status: 204, description: 'Team successfully deleted' })
